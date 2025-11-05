@@ -1,30 +1,35 @@
-import express from 'express'
-import cors from 'cors'
-import 'dotenv/config'
-import connectDB from './config/mongodb.js'
-import connectCloudinary from './config/cloudinary.js'
-import adminRouter from './routes/adminRoute.js'
-import doctorRouter from './routes/doctorRoute.js'
-import userRouter from './routes/userRoute.js'
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/mongodb.js"; 
+import userRouter from "./routes/userRoute.js";
+import doctorRouter from "./routes/doctorRoute.js";
+import adminRouter from "./routes/adminRoute.js";
 
-// app config
-const app = express()
-const port = process.env.PORT || 4000
-connectDB()
-connectCloudinary()
+dotenv.config();
 
-// middlewares
-app.use(express.json())
-app.use(cors())
+const app = express();
+const port = process.env.PORT || 4000;
 
-// api end point
-app.use('/api/admin', adminRouter)
-app.use('/api/doctor', doctorRouter)
-app.use('/api/user', userRouter)
+// Middleware
+app.use(cors());
+app.use(express.json());
+console.log("Mongo URI is:", process.env.MONGO_URI);
 
+// Connect Database
+connectDB();
 
-app.get('/', (req, res) => {
-  res.send('Api working...')
-})
+// Routes
+app.use("/api/user", userRouter);
+app.use("/api/doctor", doctorRouter);
+app.use("/api/admin", adminRouter);
 
-app.listen(port, () => console.log('Server started', port)) 
+// Default route
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});
